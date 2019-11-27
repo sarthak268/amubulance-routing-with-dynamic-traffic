@@ -12,7 +12,7 @@ if (__name__ == '__main__'):
 	treatment_time = 1800 # seconds
 	max_patient_hospital_capacity = 10
 
-	with open('./2_hours/trafficData.csv', 'r') as csvfile: 
+	with open('./data/2_hours/trafficData.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
@@ -20,7 +20,7 @@ if (__name__ == '__main__'):
 
 	  	trafficData = np.asarray(trafficData)
 
-	with open('./2_hours/collisionData.csv', 'r') as csvfile: 
+	with open('./data/2_hours/collisionData.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
@@ -28,7 +28,7 @@ if (__name__ == '__main__'):
 
 	  	collisionData = np.asarray(collisionData)
 
-	with open('./2_hours/adjM.csv', 'r') as csvfile: 
+	with open('./data/2_hours/adjM.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
@@ -36,7 +36,7 @@ if (__name__ == '__main__'):
 
 	  	adjM = np.asarray(adjM)
 
-	with open('./2_hours/hospital.csv', 'r') as csvfile: 
+	with open('./data/2_hours/hospital.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
@@ -44,7 +44,7 @@ if (__name__ == '__main__'):
 
 	  	hospitals = np.asarray(hospitals)
 
-	with open('./2_hours/nodes.csv', 'r') as csvfile: 
+	with open('./data/2_hours/nodes.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
