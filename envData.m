@@ -100,3 +100,4 @@ csvwrite('collisionData.csv', accidentData);
 csvwrite('adjM.csv', adjM);
 csvwrite('nodes.csv', Nodes);
 csvwrite('hospital.csv', Hospital_Location);
+csvwrite('edges.csv', dt2);

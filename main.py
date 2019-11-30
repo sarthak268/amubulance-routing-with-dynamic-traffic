@@ -65,6 +65,14 @@ if (__name__ == '__main__'):
 		while (collisionData[collision_counter, 0] == t):
 			active_collisions.append(collisionData[collision_counter, 1])
 			collision_counter += 1
+
+		current_max_speeds = trafficData[t, :]
+
+		
+
+
+
+			
 			
 
 
