@@ -1,6 +1,18 @@
 import numpy as np
 import csv
 
+# p1 and p2 are the nodes
+def distance(p1, p2):
+	# distance between nodes on the graph
+
+
+def distance_from_hospitals(p1, l1=hospitals):
+	di = []
+	for i in range(len(l1)):
+		d = distance(p1, l1[i, :])
+		di.append(d)
+	return di
+
 if (__name__ == '__main__'):
 
 	trafficData = []
@@ -60,13 +72,23 @@ if (__name__ == '__main__'):
 	collision_counter = 0
 	active_collisions = [] # contains nodes for all active collision
 
+	current_ambulance_locations = []
+
+	for i in range(num_hospitals):
+		current_ambulance_locations.append([hospitals[i, 0], hospitals[i, 1]])
+	
 	for t in range(num_seconds):
 
 		while (collisionData[collision_counter, 0] == t):
 			active_collisions.append(collisionData[collision_counter, 1])
 			collision_counter += 1
 
-		current_max_speeds = trafficData[t, :]
+		current_max_speeds = trafficData[t, :] # max speed of all edges at time t
+
+		for c in range(len(active_collisions)):
+			casualty = active_collisions[c] # node of collision
+			d = distance_from_list(casualty)
+
 
 		
 
