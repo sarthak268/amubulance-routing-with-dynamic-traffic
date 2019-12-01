@@ -16,8 +16,8 @@ class Graph:
       
     def BellmanFord(self, src): 
   
-        dist = [float("Inf")] * self.V 
-        dist[src] = 0 
+        dist = [float("Inf")] * self.V
+        dist[(int)(src)] = 0 
   
 
         for i in range(self.V - 1): 

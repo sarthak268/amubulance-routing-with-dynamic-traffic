@@ -46,7 +46,7 @@ if (__name__ == '__main__'):
 		count = 0
 		for row in csvreader: 
 	  		hospitals.append(list(map(float, row)))
-	  		all_nodes_dict[(row[0], row[1])] = 100 + count
+	  		all_nodes_dict[((float)(row[0]), (float)(row[1]))] = 100 + count
 	  		count += 1
 
 	  	hospitals = np.asarray(hospitals)
@@ -57,7 +57,7 @@ if (__name__ == '__main__'):
 		count = 0
 		for row in csvreader:
 			nodes_dict[count] = row
-			all_nodes_dict[(row[0], row[1])] = count
+			all_nodes_dict[((float)(row[0]), (float)(row[1]))] = count
 			count += 1
 	  		nodes.append(list(map(float, row)))
 	  	nodes = np.asarray(nodes)
@@ -67,7 +67,7 @@ if (__name__ == '__main__'):
 		
 		count = 0
 		for row in csvreader:
-			edges_dict[(row[0], row[1])] = count
+			edges_dict[((float)(row[0]), (float)(row[1]))] = count
 			count += 1
 	  		edges.append(list(map(float, row)))
 	  	edges = np.asarray(edges)
@@ -87,26 +87,35 @@ if (__name__ == '__main__'):
 		current_ambulance_locations.append([hospitals[i, 0], hospitals[i, 1]])
 	
 	for t in range(num_seconds):
+		print('Time Step: ', t)
 		while (collisionData[collision_counter, 0] == t):
 			active_collisions.append(collisionData[collision_counter, 1])
 			collision_counter += 1
+			if(collision_counter==1000):
+				break
 
 		current_max_speeds = trafficData[t, :] # max speed of all edges at time t
 		g = bf.Graph(num_nodes + num_hospitals)
 		for i1 in range(num_nodes + num_hospitals):
 			for j1 in range(num_nodes + num_hospitals):
-				if(adjM[i1, j1] == 1):
-					weight = trafficData[t, edges_dict[i1, j1]]
-					g.addEdge(i1, j1, weight)
+				if(adjM[i1, j1] == 1) and i1!=j1:
+					if([i1, j1] in edges_dict.keys()): ##### check for this condition
+						weight = trafficData[t, edges_dict[i1, j1]]
+						g.addEdge(i1, j1, weight)
 
+		sum_all_ambulances = []
 		for a in range(len(current_ambulance_locations)):
-			a_node = all_nodes_dict[current_ambulance_locations[a]]
+			a_node = all_nodes_dict[(current_ambulance_locations[a][0], current_ambulance_locations[a][1])]
 			a_distances = g.BellmanFord(a_node) # ambulance to casualty
-			print(len(a_distances))
+			total_sum_a = []
 			for ac in range(len(active_collisions)):
 				ac_distances = g.BellmanFord(active_collisions[ac]) # casualty to hospital
- 				print(len(ac_distances))
+				for h in range(100, 105):
+					total_sum_a.append(a_distances[(int)(active_collisions[ac])] + ac_distances[h])
+					# calculate the sum of the distances here
+			sum_all_ambulances.append(total_sum_a)
+ 			# print(len(sum_all_ambulances))	
 
-		for c in range(len(active_collision)):
-			casualty = active_collisions[c] # node of collision
+		# for c in range(len(active_collisions)):
+		# 	casualty = active_collisions[c] # node of collision
 			# d = distance_from_list(casualty)
