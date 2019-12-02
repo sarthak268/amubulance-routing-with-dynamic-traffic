@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import csv
 import bellman_ford as bf
@@ -12,7 +13,7 @@ class Ambulance:
 		self.x = -1
 		self.y = -1
 
-	def set_location(x, y):
+	def set_location(self, x, y):
 		self.x = x
 		self.y = y
 
@@ -24,14 +25,16 @@ class Hospitals:
 		self.x = -1
 		self.y = -1
 
-	def set_node(x):
+	def set_node(self, x):
 		self.node = x
 
-	def set_location(x, y):
+	def set_location(self, x, y):
 		self.x = x
 		self.y = y
 
-def distance_between_nodes(node1, node2):
+def distance_between_nodes(n1, n2):
+	node1 = nodes_all[n1, :]
+	node2 = nodes_all[n2, :]
 	return math.sqrt((node1[0] - node2[0])**2 + (node1[1] - node2[1])**2)
 
 if (__name__ == '__main__'):
@@ -44,6 +47,7 @@ if (__name__ == '__main__'):
 	nodes_dict = {}
 	edges_dict = {}
 	hospitals = []
+	hospitals_nodes = []
 	all_nodes_dict = {}
 
 	treatment_time = 1800 # seconds
@@ -82,8 +86,11 @@ if (__name__ == '__main__'):
 	  		h = Hospitals(max_patient_hospital_capacity)
 	  		h.set_location((float)(row[0]), (float)(row[1]))
 	  		h.set_node(100+count)
-	  		hospitals.append(h)
+	  		hospitals_nodes.append(h)
+	  		hospitals.append(list(map(float, row)))
+	  		all_nodes_dict[((float)(row[0]), (float)(row[1]))] = 100 + count
 	  		count += 1
+	  	hospitals = np.asarray(hospitals)
 	  	
 	with open('./data/2_hours/nodes.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
@@ -98,10 +105,9 @@ if (__name__ == '__main__'):
 
 	with open('./data/2_hours/edges.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
-		
 		count = 0
 		for row in csvreader:
-			edges_dict[((float)(row[0]), (float)(row[1]))] = count
+			edges_dict[(list(map(int, row))[0], list(map(int, row))[1])] = count
 			count += 1
 	  		edges.append(list(map(float, row)))
 	  	edges = np.asarray(edges)
@@ -111,6 +117,8 @@ if (__name__ == '__main__'):
 	num_nodes = nodes.shape[0]
 	num_hospitals = hospitals.shape[0]
 
+	nodes_all = np.concatenate((nodes, hospitals), axis=0)
+
 	collision_counter = 0
 	active_collisions = [] # contains nodes for all active collision
 
@@ -119,7 +127,14 @@ if (__name__ == '__main__'):
 	# initialising the ambulance locations
 	for i in range(num_hospitals):
 		current_ambulance_locations.append([hospitals[i, 0], hospitals[i, 1]])
-	
+
+	# initialize unweighted graph
+	g = bf.Graph(num_nodes + num_hospitals)
+	for i1 in range(num_nodes + num_hospitals):
+		for j1 in range(num_nodes + num_hospitals):
+			if(adjM[i1, j1] == 1):
+				g.addEdge(i1, j1, 1)
+				
 	for t in range(num_seconds):
 		print('Time Step: ', t)
 		while (collisionData[collision_counter, 0] == t):
@@ -129,21 +144,21 @@ if (__name__ == '__main__'):
 				break
 
 		current_max_speeds = trafficData[t, :] # max speed of all edges at time t
-		g = bf.Graph(num_nodes + num_hospitals)
 		for i1 in range(num_nodes + num_hospitals):
 			for j1 in range(num_nodes + num_hospitals):
 				if(adjM[i1, j1] == 1) and i1!=j1:
-					if([i1, j1] in edges_dict.keys()): ##### check for this condition
+					if((i1, j1) in edges_dict.keys()): ##### check for this condition
 						speed = trafficData[t, edges_dict[i1, j1]]
 						distance = distance_between_nodes(i1, j1)
 						time = distance / speed
-						g.addEdge(i1, j1, time)
-
+						g.add_edge_weight(i1, j1, time)
+						
 		sum_all_ambulances = []
 		for a in range(len(current_ambulance_locations)):
 			a_node = all_nodes_dict[(current_ambulance_locations[a][0], current_ambulance_locations[a][1])]
 			a_distances = g.BellmanFord(a_node) # ambulance to casualty
 			total_sum_a = []
+			print(a, a_distances)
 			hospital_for_each_collision = []
 			for ac in range(len(active_collisions)):
 				ac_distances = g.BellmanFord(active_collisions[ac]) # casualty to hospital
@@ -151,7 +166,7 @@ if (__name__ == '__main__'):
 					# calculate the sum of the distances here
 					total_sum_a.append(a_distances[(int)(active_collisions[ac])] + ac_distances[h])
 			sum_all_ambulances.append(np.asarray(total_sum_a))
-
+		
 		# naive approach
 		assigned_accidents = []
 		for s in sum_all_ambulances:
