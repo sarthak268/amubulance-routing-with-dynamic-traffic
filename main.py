@@ -66,13 +66,14 @@ if (__name__ == '__main__'):
 
 	  	collisionData = np.asarray(collisionData)
 
-	with open('./data/2_hours/adjM.csv', 'r') as csvfile: 
+	with open('./data/2_hours/adjM_new.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
 		
 		for row in csvreader: 
 	  		adjM.append(list(map(float, row)))
 
 	  	adjM = np.asarray(adjM)
+	  	adjM = adjM.astype(int)
 
 	with open('./data/2_hours/hospital.csv', 'r') as csvfile: 
 		csvreader = csv.reader(csvfile) 
