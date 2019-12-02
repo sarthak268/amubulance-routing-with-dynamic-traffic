@@ -147,8 +147,8 @@ if (__name__ == '__main__'):
 			for ac in range(len(active_collisions)):
 				ac_distances = g.BellmanFord(active_collisions[ac]) # casualty to hospital
 				for h in range(num_nodes, num_nodes + num_hospitals):
-					total_sum_a.append(a_distances[(int)(active_collisions[ac])] + ac_distances[h])
 					# calculate the sum of the distances here
+					total_sum_a.append(a_distances[(int)(active_collisions[ac])] + ac_distances[h])
 			sum_all_ambulances.append(np.asarray(total_sum_a))
 
 		# naive approach
@@ -163,5 +163,7 @@ if (__name__ == '__main__'):
  					s_copy.pop(casualty_index)
  					min_time, casualty_index = np.min(s_copy), np.argmin(s_copy)
  				assigned_accidents.append(casualty_index)
+
+ 		
 
 
