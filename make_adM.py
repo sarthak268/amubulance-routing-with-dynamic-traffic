@@ -1,37 +1,38 @@
 import csv
 import numpy as np
 
-# edges = []
+edges = []
 
-# with open('./data/2_hours/edges.csv', 'r') as csvfile: 
-#     csvreader = csv.reader(csvfile) 
+with open('./data/2_hours/edges.csv', 'r') as csvfile: 
+    csvreader = csv.reader(csvfile) 
     
-#     for row in csvreader:
-#         edges.append(list(map(float, row)))
-#     edges = np.asarray(edges)
+    for row in csvreader:
+        edges.append(list(map(float, row)))
+    edges = np.asarray(edges)
 
-# adjM = np.zeros((105, 105))
+adjM = np.zeros((105, 105))
 
-# for i in range(edges.shape[0]):
-#     adjM[(int)(edges[i, 0]), (int)(edges[i, 1])] = 1
+# print(edges.shape)
+for i in range(edges.shape[0]):
+    adjM[(int)(edges[i, 0]), (int)(edges[i, 1])] = 1
 
-# for i in range(105):
-#     adjM[i, i] = 1
+for i in range(105):
+    adjM[i, i] = 1
 
-# np.savetxt("./data/2_hours/adjM_new.csv", adjM, delimiter=",")
+np.savetxt("./data/2_hours/adjM_new.csv", adjM, delimiter=",")
 
 
 ####
-adjM = []
+# adjM = []
 
-with open('./data/2_hours/adjM_new.csv', 'r') as csvfile: 
-    csvreader = csv.reader(csvfile) 
+# with open('./data/2_hours/adjM_new.csv', 'r') as csvfile: 
+#     csvreader = csv.reader(csvfile) 
     
-    for row in csvreader: 
-        adjM.append(list(map(float, row)))
+#     for row in csvreader: 
+#         adjM.append(list(map(float, row)))
 
-    adjM = np.asarray(adjM)
-    adjM = adjM.astype(int)
+#     adjM = np.asarray(adjM)
+#     adjM = adjM.astype(int)
 
-print (adjM)
-print (adjM.shape)
+# print (adjM)
+# print (adjM.shape)
