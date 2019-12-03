@@ -13,6 +13,23 @@ def plot(nodes, active_accidents, patients_saved, current_location):
 
 		plt.savefig(image_save_folder + str(i) + '.png')
 
+def plot1(nodes, hospitals, path1):
+	color = ['y', 'b', 'orange', 'black', 'r']
+
+	for a in range(len(path1)):
+		for b in range (len(path1)):
+			active_node, ambulance_assigned, path = path1[a]
+			node_x, node_y = nodes[active_node, 0], nodes[active_node, 1]
+			plt.plot(node_x, node_y, c=color[ambulance_assigned], marker='o')
+			current_node_x, current_node_y = nodes[path[b], 0], nodes[path[b], 1]
+			plt.plot(current_node_x, current_node_y, c=color[ambulance_assigned], marker='v')
+		#for j in range()
+
+	plt.scatter(x=hospitals[:, 0], y=hospitals[:, 1], c='g', marker='o')
+
+	plt.savefig(image_save_folder + str(t) + '.png')
+
+
 def make_video():
 	import cv2
 	import os

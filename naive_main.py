@@ -2,6 +2,7 @@ import math
 import numpy as np
 import csv
 import bellman_ford as bf
+# from simulate import plot1
 
 def distance_between_nodes(n1, n2):
 	node1 = nodes_all[n1, :]
@@ -106,6 +107,7 @@ if (__name__ == '__main__'):
 	nodes_all = np.concatenate((nodes, hospitals), axis=0)
 
 	collision_counter = 0
+	saves = 0
 	active_collisions = [] # contains nodes for all active collision
 
 	current_ambulance_locations = []
@@ -155,23 +157,17 @@ if (__name__ == '__main__'):
 				if(t>=b11):
 					hospital_vacancy[a11-100] -= 1
 					hospital_allocation_timings[a11].remove(b11)
-		# print('Hospital Vacancies: ', t, hospital_allocation_timings)
 		######################################################################
+		total_path = []
 
 		for ac in active_collisions:
 			active_node = (int)(ac)
-			# print('Active Node:', active_node)
 			ac_distances, p = np.asarray(g.BellmanFord(active_node))
-			# print('DISTANCES : ', ac_distances)
 			hospital_distances_list = ac_distances[100:]
-			# print('Hospital distances:', hospital_distances_list)
 			nearest_hospital = 100 + np.argmin(ac_distances[100:])
-			# print('Nearest hospital:', nearest_hospital)
 			assigned_ambulance = hospital_ambulance_dict[nearest_hospital]
 			path = get_path(p, np.argmin(ac_distances[100:]), active_node)
-			# simulation_data.append([t, path, active_collisions])
-			# print('assigned ambulance', assigned_ambulance)
-			
+
 			if(ambulance_availability[assigned_ambulance]==0):
 				flag=1
 			else:
@@ -201,9 +197,15 @@ if (__name__ == '__main__'):
 				print('Active Collisions:', active_collisions)
 				print('Ambulance to casualty assignment:', ambulance_casualty_dict)
 				active_collisions.remove(ac)
-		if(t==200):
+				saves += 1
+
+			total_path.append([active_node, assigned_ambulance, path])
+
+		if(t==2500):
+			print (collision_counter, saves)
 			break
 
+		#plot1(nodes, hospitals, total_path, active_collisions)
 
 	with open('./data/2_hours/simulation_data_2000.csv', mode='w') as employee_file:
 		writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
